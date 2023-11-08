@@ -1,7 +1,7 @@
-import {useState} from "react";
-import { useNavigate } from "react-router-dom";
+import React, {useState} from "react";
+import { Link } from "react-router-dom";
 
-function Login({handleLogin}) {
+function Register({handleReg}) {
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -16,13 +16,13 @@ function Login({handleLogin}) {
 
     function handleSubmit(e) {
         e.preventDefault();
-        handleLogin(password, username);
+        handleReg(password, username);
     }
 
     return (
         <main className="content">
-            <form className="auth" name="info-login" onSubmit={handleSubmit}>
-                <h2 className="auth__title">Вход</h2>
+            <form className="auth" name="info-register" onSubmit={handleSubmit}>
+                <h2 className="auth__title">Регистрация</h2>
                 <label htmlFor="input-email" className="auth__form-field">
                     <input type="email" className="auth__input auth__input_email" id="input-email" name="email" value={username} onChange={handleChangeUsername}
                            placeholder="Email" required/>
@@ -34,11 +34,11 @@ function Login({handleLogin}) {
                            required/>
                     <span className="auth__input-error input-password-error"></span>
                 </label>
-                <button className="auth__submit-button" type="submit"
-                        aria-label="Войти">Войти
+                <button className="auth__submit-button" aria-label="Зарегистрироваться">Зарегистрироваться
                 </button>
+                <Link className="auth__link" to="/sign-in">Уже зарегистрированы? Войти</Link>
             </form>
         </main>
     )
 }
-export default Login
+export default Register
