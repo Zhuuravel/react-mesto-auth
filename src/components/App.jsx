@@ -9,13 +9,14 @@ import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
 import {useEffect, useState} from "react";
 import ImagePopup from "./ImagePopup";
-import MyApi from "../utils/Api";
+import myApi from "../utils/Api";
 import {CurrentUserContext} from "../contexts/CurrentUserContext";
 import AddPlacePopup from "./AddPlacePopup";
 import {Route, Routes, Navigate} from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 import ProtectedRouteElement from "./ProtectedRoute";
 import * as auth from "../utils/Auth";
+import {usePopupClose} from "../hooks/usePopupClose";
 
 function App() {
 
@@ -35,7 +36,7 @@ const navigate = useNavigate();
 
     useEffect(() => {
         if (loggedIn) {
-            Promise.all([MyApi.getProfileInfo(), MyApi.getAllCards()])
+            Promise.all([myApi.getProfileInfo(), myApi.getAllCards()])
                 .then(([userData, cards]) => {
                     // тут установка данных пользователя
                     setCurrentUser(userData);
@@ -131,27 +132,14 @@ const navigate = useNavigate();
 
     const isOpen = isEditAvatarPopupOpen || isEditProfilePopupOpen || isAddPlacePopupOpen || isInfoTooltipPopupOpen || selectedCard.link
 
-    useEffect(() => {
-        function closeByEscape(evt) {
-            if(evt.key === 'Escape') {
-                closeAllPopups();
-            }
-        }
-        if(isOpen) { // навешиваем только при открытии
-            document.addEventListener('keydown', closeByEscape);
-            return () => {
-                document.removeEventListener('keydown', closeByEscape);
-            }
-        }
-    }, [isOpen])
-
+    usePopupClose(isOpen, closeAllPopups)
 
     function handleCardLike(card) {
         // Снова проверяем, есть ли уже лайк на этой карточке
         const isLiked = card.likes.some(i => i._id === currentUser._id);
 
         // Отправляем запрос в API и получаем обновлённые данные карточки
-        MyApi.changeLikeCardStatus(card._id, !isLiked).then((newCard) => {
+        myApi.changeLikeCardStatus(card._id, !isLiked).then((newCard) => {
             setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
         }).catch((error) => {
             console.log(error)
@@ -159,7 +147,7 @@ const navigate = useNavigate();
     }
 
     function handleCardDelete(card) {
-        MyApi.deleteCards(card._id).then(() => {
+        myApi.deleteCards(card._id).then(() => {
             setCards((state) => state.filter((c) => c._id !== card._id));
     }).catch((error) => {
             console.log(error)
@@ -167,7 +155,7 @@ const navigate = useNavigate();
     }
 
     function handleUpdateUser(onUpdateUser) {
-        MyApi.setProfileInfo(onUpdateUser).then((data) => {
+        myApi.setProfileInfo(onUpdateUser).then((data) => {
             setCurrentUser(data);
             closeAllPopups();
         }).catch((error) => {
@@ -176,7 +164,7 @@ const navigate = useNavigate();
     }
 
     function handleUpdateAvatar(onUpdateAvatar) {
-        MyApi.setProfileAvatar(onUpdateAvatar).then((data) => {
+        myApi.setProfileAvatar(onUpdateAvatar).then((data) => {
             setCurrentUser(data);
             closeAllPopups();
         }).catch((error) => {
@@ -185,7 +173,7 @@ const navigate = useNavigate();
     }
 
     function handleAddPlaceSubmit(onAddPlace) {
-        MyApi.createCards(onAddPlace)
+        myApi.createCards(onAddPlace)
                 .then((newCard) => {
                     // и тут отрисовка карточек
                     setCards([newCard, ...cards]);

@@ -30,7 +30,6 @@ export const authorize = (password, email) => {
                 return data;
             }
         })
-        .catch((err) => console.log(err));
 };
 
 export const checkToken = (myJwt) => {
