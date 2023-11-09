@@ -21,12 +21,12 @@ function Register({handleReg}) {
     }
 
     return (
-        <AuthForm title="Вход"
+        <AuthForm title="Регистрация"
                   handleChangeUsername={handleChangeUsername}
                   handleChangePassword={handleChangePassword}
                   username={username}
                   password={password}
-                  onSubmit={handleSubmit} text="Войти">
+                  onSubmit={handleSubmit} text="Зарегистрироваться">
             <Link className="auth__link" to="/sign-in">Уже зарегистрированы? Войти</Link>
         </AuthForm>
     )
